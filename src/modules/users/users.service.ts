@@ -5,6 +5,7 @@ import { IUserService } from './interfaces/userService.interface';
 import { SearchUserParams } from './interfaces/dto/search-user.dto';
 import { User, UserDocument } from './schemas/user.schema';
 import { CreateUserParams } from './interfaces/dto/create-user.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService implements IUserService {
@@ -13,7 +14,8 @@ export class UsersService implements IUserService {
     @InjectConnection() private connection: Connection,
   ) {}
 
-  create(data: CreateUserParams): Promise<UserDocument> {
+  async create(data: CreateUserParams): Promise<UserDocument> {
+    data.password = await bcrypt.hash(data.password, 8);
     const user = new this.UserModel(data);
 
     return user.save();
@@ -26,9 +28,7 @@ export class UsersService implements IUserService {
   }
 
   async findByEmail(email: string): Promise<UserDocument> {
-    const user = await this.UserModel.findOne({ email: email }).select(
-      '-__v password',
-    );
+    const user = await this.UserModel.findOne({ email: email }).select('-__v');
 
     return user;
   }

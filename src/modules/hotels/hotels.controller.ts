@@ -4,7 +4,7 @@ import { HotelsService } from './hotels.service';
 import { CreateHotelDto } from './interfaces/dto/create-hotel.dto';
 import { HotelDocument } from './schemas/hotel.schema';
 
-@Controller('hotels')
+@Controller('common/hotel-rooms')
 export class HotelsController {
   constructor(private readonly hotelsService: HotelsService) {}
 
