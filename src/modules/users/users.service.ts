@@ -27,7 +27,7 @@ export class UsersService implements IUserService {
 
   async findByEmail(email: string): Promise<UserDocument> {
     const user = await this.UserModel.findOne({ email: email }).select(
-      '-__v passwordHash',
+      '-__v password',
     );
 
     return user;
@@ -35,7 +35,7 @@ export class UsersService implements IUserService {
 
   async findAll(params: SearchUserParams): Promise<UserDocument[]> {
     const { limit, offset = 0, ...rest } = params;
-    const users = this.UserModel.find(rest, { passwordHash: 0, __v: 0 }).skip(
+    const users = this.UserModel.find(rest, { password: 0, __v: 0 }).skip(
       offset,
     );
     if (limit) users.limit(limit);
