@@ -20,6 +20,7 @@ export class UsersController {
   findById(@Param() id: Types.ObjectId): Promise<UserDocument> {
     return this.userService.findById(id);
   }
+
   @UsePipes(new JoiValidationPipe(joiUserSchema))
   @Post()
   create(@Body() body: CreateUserParams): Promise<UserDocument> {
