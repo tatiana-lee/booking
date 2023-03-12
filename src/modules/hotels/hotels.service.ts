@@ -29,11 +29,15 @@ export class HotelsService implements IHotelService {
   }
 
   async search(params: SearchHotelParams): Promise<HotelDocument[]> {
-    return await this.HotelModel.find(params, {
+    const { limit, offset, ...rest } = params;
+    return await this.HotelModel.find(rest, {
       createdAt: 0,
       updatedAt: 0,
       __v: 0,
-    }).exec();
+    })
+      .limit(limit)
+      .skip(offset)
+      .exec();
   }
 
   async update(
@@ -65,12 +69,15 @@ export class HotelRoomService implements IHotelRoomService {
 
   async findById(id: string | Types.ObjectId): Promise<HotelRoomDocument> {
     return await this.HotelRoomModel.findById(id)
-      .populate({ path: 'hotel' })
+      .populate({ path: 'hotel', select: '-__v' })
       .exec();
   }
 
   async search(params: SearchRoomsParams): Promise<HotelRoomDocument[]> {
-    return await this.HotelRoomModel.find(params)
+    const { limit, offset, ...rest } = params;
+    return await this.HotelRoomModel.find(rest)
+      .limit(limit)
+      .skip(offset)
       .populate({ path: 'hotel' })
       .exec();
   }

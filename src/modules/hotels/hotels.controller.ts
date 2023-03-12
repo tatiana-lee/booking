@@ -9,6 +9,7 @@ import {
   UseGuards,
   UseInterceptors,
   UploadedFiles,
+  Request,
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { Types } from 'mongoose';
@@ -26,17 +27,25 @@ import { HotelRoomDocument } from './schemas/hotel-room.schema';
 import { HotelDocument } from './schemas/hotel.schema';
 
 @Controller()
-@UseGuards(RolesGuard)
+// @UseGuards(RolesGuard)
 export class HotelRoomController {
   constructor(private readonly hotelRoomService: HotelRoomService) {}
 
   @Get('common/hotel-rooms')
-  search(@Query() params: SearchRoomsParams): Promise<HotelRoomDocument[]> {
+  search(
+    @Query() params: SearchRoomsParams,
+    @Request() req,
+  ): Promise<HotelRoomDocument[]> {
+    if (!req.user || req.user.role === 'client') {
+      params.isEnabled = true;
+    }
     return this.hotelRoomService.search(params);
   }
 
   @Get('common/hotel-rooms/:id')
-  findById(@Param('id') id: Types.ObjectId): Promise<HotelRoomDocument> {
+  findById(
+    @Param('id') id: string | Types.ObjectId,
+  ): Promise<HotelRoomDocument> {
     return this.hotelRoomService.findById(id);
   }
 
