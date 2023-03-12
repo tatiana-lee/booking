@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel, InjectConnection } from '@nestjs/mongoose';
 import { Model, Connection, Types } from 'mongoose';
 import { IUserService } from './interfaces/userService.interface';
@@ -15,10 +15,17 @@ export class UsersService implements IUserService {
   ) {}
 
   async create(data: CreateUserParams): Promise<UserDocument> {
+    const { email } = data;
+    const isExist = await this.UserModel.findOne({ email: email }).exec();
+    if (isExist) {
+      throw new BadRequestException({
+        error: 'Пользователь с таким email уже существует',
+      });
+    }
+
     data.password = await bcrypt.hash(data.password, 8);
     const user = new this.UserModel(data);
-
-    return user.save();
+    return await user.save();
   }
 
   findById(id: Types.ObjectId): Promise<UserDocument> {

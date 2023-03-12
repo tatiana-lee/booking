@@ -1,11 +1,15 @@
-import { Controller, Post, Request, Response, UseGuards } from '@nestjs/common';
-// import { AuthService } from './auth.service';
+import {
+  Controller,
+  Post,
+  Request,
+  Response,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
 import { LocalAuthGuard } from './guards/local.auth.guards';
 
 @Controller('auth')
 export class AuthController {
-  // constructor(private readonly authService: AuthService) {}
-
   @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(@Request() req) {
@@ -15,7 +19,11 @@ export class AuthController {
 
   @Post('logout')
   logout(@Request() req, @Response() res) {
-    req.session.destroy();
-    res.send('success');
+    if (req.user) {
+      req.session.destroy();
+      res.send('success');
+    } else {
+      throw new UnauthorizedException();
+    }
   }
 }

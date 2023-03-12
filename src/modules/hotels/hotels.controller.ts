@@ -7,23 +7,27 @@ import {
   Put,
   Query,
   UseGuards,
+  UseInterceptors,
+  UploadedFiles,
 } from '@nestjs/common';
+import { FilesInterceptor } from '@nestjs/platform-express';
 import { Types } from 'mongoose';
 import { Roles } from 'src/common/decorators/roles.decorator';
+import { multerOptions } from 'src/common/filters/multer-options';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { HotelsService, HotelRoomService } from './hotels.service';
 import { CreateHotelDto } from './interfaces/dto/create-hotel.dto';
 import { SearchHotelParams } from './interfaces/dto/search-hotel.dto';
 import { SearchRoomsParams } from './interfaces/dto/search-room.dto';
 import { UpdateHotelParams } from './interfaces/dto/update-hotel.dto';
-import { IHotelRoomService } from './interfaces/hotelRoomService.interface';
+// import { IHotelRoomService } from './interfaces/hotelRoomService.interface';
 import { IHotelService } from './interfaces/hotelService.interface';
 import { HotelRoomDocument } from './schemas/hotel-room.schema';
 import { HotelDocument } from './schemas/hotel.schema';
 
 @Controller()
 @UseGuards(RolesGuard)
-export class HotelRoomController implements IHotelRoomService {
+export class HotelRoomController {
   constructor(private readonly hotelRoomService: HotelRoomService) {}
 
   @Get('common/hotel-rooms')
@@ -31,15 +35,20 @@ export class HotelRoomController implements IHotelRoomService {
     return this.hotelRoomService.search(params);
   }
 
-  @Get('common/hotel-rooms:id')
+  @Get('common/hotel-rooms/:id')
   findById(@Param('id') id: Types.ObjectId): Promise<HotelRoomDocument> {
     return this.hotelRoomService.findById(id);
   }
 
   @Roles('admin')
+  @UseInterceptors(FilesInterceptor('files', 5, multerOptions))
   @Post('admin/hotel-rooms')
-  create(@Body() body: HotelRoomDocument): Promise<HotelRoomDocument> {
-    return this.hotelRoomService.create(body);
+  async create(
+    @Body() data: Partial<HotelRoomDocument>,
+    @UploadedFiles() files: Array<Express.Multer.File>,
+  ): Promise<HotelRoomDocument> {
+    data.images = files.map((file) => file.originalname);
+    return await this.hotelRoomService.create(data);
   }
 
   @Roles('admin')

@@ -56,7 +56,7 @@ export class HotelRoomService implements IHotelRoomService {
     @InjectConnection() private connection: Connection,
   ) {}
 
-  async create(data: HotelRoomDocument): Promise<HotelRoomDocument> {
+  async create(data: Partial<HotelRoomDocument>): Promise<HotelRoomDocument> {
     const hotel = await new this.HotelRoomModel(data).populate({
       path: 'hotel',
     });
