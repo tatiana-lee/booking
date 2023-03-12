@@ -28,7 +28,7 @@ export class UsersService implements IUserService {
     return await user.save();
   }
 
-  findById(id: Types.ObjectId): Promise<UserDocument> {
+  findById(id: Types.ObjectId | string): Promise<UserDocument> {
     const user = this.UserModel.findById(id).exec();
 
     return user;
@@ -41,12 +41,10 @@ export class UsersService implements IUserService {
   }
 
   async findAll(params: SearchUserParams): Promise<UserDocument[]> {
-    const { limit, offset = 0, ...rest } = params;
-    const users = this.UserModel.find(rest, { password: 0, __v: 0 }).skip(
-      offset,
-    );
-    if (limit) users.limit(limit);
-
-    return await users.exec();
+    const { limit, offset, ...rest } = params;
+    return await this.UserModel.find(rest, { password: 0, __v: 0, role: 0 })
+      .limit(limit)
+      .skip(offset)
+      .exec();
   }
 }

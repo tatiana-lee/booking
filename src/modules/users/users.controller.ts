@@ -7,6 +7,7 @@ import {
   UsePipes,
   Request,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { Types } from 'mongoose';
 import { Roles } from 'src/common/decorators/roles.decorator';
@@ -23,13 +24,20 @@ import { JoiValidationPipe } from './validation/joi.validation.pipe';
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
-  @Get()
-  findAll(@Body() params: SearchUserParams): Promise<UserDocument[]> {
-    return this.userService.findAll(params);
+  @Roles('admin')
+  @Get('admin/users')
+  async findAllUsersByAdmin(@Query() params: SearchUserParams) {
+    return await this.userService.findAll(params);
+  }
+
+  @Roles('manager')
+  @Get('manager/users')
+  async findAllUsersByManager(@Query() params: SearchUserParams) {
+    return await this.userService.findAll(params);
   }
 
   @Get(':id')
-  findById(@Param() id: Types.ObjectId): Promise<UserDocument> {
+  findById(@Param() id: string | Types.ObjectId): Promise<UserDocument> {
     return this.userService.findById(id);
   }
 
