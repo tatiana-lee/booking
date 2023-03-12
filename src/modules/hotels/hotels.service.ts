@@ -8,7 +8,7 @@ import { SearchHotelParams } from './interfaces/dto/search-hotel.dto';
 import { SearchRoomsParams } from './interfaces/dto/search-room.dto';
 import { UpdateHotelParams } from './interfaces/dto/update-hotel.dto';
 import { IHotelRoomService } from './interfaces/hotelRoomService.interface';
-import { HotelRoomDocument } from './schemas/hotel-room.schema';
+import { HotelRoom, HotelRoomDocument } from './schemas/hotel-room.schema';
 
 @Injectable()
 export class HotelsService implements IHotelService {
@@ -17,48 +17,70 @@ export class HotelsService implements IHotelService {
     @InjectConnection() private connection: Connection,
   ) {}
 
-  create(data: CreateHotelDto): Promise<HotelDocument> {
-    const hotel = new this.HotelModel(data);
+  async create(data: CreateHotelDto): Promise<HotelDocument> {
+    const hotel = await new this.HotelModel(data);
     return hotel.save();
   }
 
-  findById(id: Types.ObjectId): Promise<HotelDocument> {
-    return this.HotelModel.findById(id).exec();
+  async findById(id: Types.ObjectId | string): Promise<HotelDocument> {
+    if (Types.ObjectId.isValid(id)) {
+      return await this.HotelModel.findById(id);
+    }
   }
 
-  search(params: SearchHotelParams): Promise<HotelDocument[]> {
-    return this.HotelModel.find(params).exec();
+  async search(params: SearchHotelParams): Promise<HotelDocument[]> {
+    return await this.HotelModel.find(params, {
+      createdAt: 0,
+      updatedAt: 0,
+      __v: 0,
+    }).exec();
   }
 
-  update(id: Types.ObjectId, data: UpdateHotelParams): Promise<HotelDocument> {
-    return this.HotelModel.findByIdAndUpdate(id, data).exec();
+  async update(
+    id: string | Types.ObjectId,
+    data: UpdateHotelParams,
+  ): Promise<HotelDocument> {
+    if (Types.ObjectId.isValid(id)) {
+      return await this.HotelModel.findOneAndUpdate({ _id: id }, data, {
+        new: true,
+      });
+    }
   }
 }
 
 @Injectable()
 export class HotelRoomService implements IHotelRoomService {
   constructor(
-    @InjectModel(Hotel.name) private HotelRoomModel: Model<HotelRoomDocument>,
+    @InjectModel(HotelRoom.name)
+    private HotelRoomModel: Model<HotelRoomDocument>,
     @InjectConnection() private connection: Connection,
   ) {}
 
-  create(data: HotelRoomDocument): Promise<HotelRoomDocument> {
-    const hotel = new this.HotelRoomModel(data);
+  async create(data: HotelRoomDocument): Promise<HotelRoomDocument> {
+    const hotel = await new this.HotelRoomModel(data).populate({
+      path: 'hotel',
+    });
     return hotel.save();
   }
 
-  findById(id: Types.ObjectId): Promise<HotelRoomDocument> {
-    return this.HotelRoomModel.findById(id).populate({ path: 'hotel' }).exec();
+  async findById(id: string | Types.ObjectId): Promise<HotelRoomDocument> {
+    return await this.HotelRoomModel.findById(id)
+      .populate({ path: 'hotel' })
+      .exec();
   }
 
-  search(params: SearchRoomsParams): Promise<HotelRoomDocument[]> {
-    return this.HotelRoomModel.find(params).populate({ path: 'hotel' }).exec();
+  async search(params: SearchRoomsParams): Promise<HotelRoomDocument[]> {
+    return await this.HotelRoomModel.find(params)
+      .populate({ path: 'hotel' })
+      .exec();
   }
 
-  update(
-    id: Types.ObjectId,
+  async update(
+    id: string | Types.ObjectId,
     data: HotelRoomDocument,
   ): Promise<HotelRoomDocument> {
-    return this.HotelRoomModel.findByIdAndUpdate(id, data).exec();
+    return await this.HotelRoomModel.findByIdAndUpdate(id, data)
+      .populate({ path: 'hotel' })
+      .exec();
   }
 }

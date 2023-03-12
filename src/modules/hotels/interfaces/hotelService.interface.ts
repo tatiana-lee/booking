@@ -5,7 +5,7 @@ import { UpdateHotelParams } from './dto/update-hotel.dto';
 
 export interface IHotelService {
   create(data: any): Promise<Hotel>;
-  findById(id: Types.ObjectId): Promise<Hotel>;
+  findById(id: string | Types.ObjectId): Promise<Hotel>;
   search(params: SearchHotelParams): Promise<Hotel[]>;
-  update(id: Types.ObjectId, data: UpdateHotelParams): Promise<Hotel>;
+  update(id: string | Types.ObjectId, data: UpdateHotelParams): Promise<Hotel>;
 }

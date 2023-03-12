@@ -21,42 +21,45 @@ import { IHotelService } from './interfaces/hotelService.interface';
 import { HotelRoomDocument } from './schemas/hotel-room.schema';
 import { HotelDocument } from './schemas/hotel.schema';
 
-@Controller('common/hotel-rooms')
+@Controller()
+@UseGuards(RolesGuard)
 export class HotelRoomController implements IHotelRoomService {
   constructor(private readonly hotelRoomService: HotelRoomService) {}
 
-  @Get(':id')
-  findById(@Param() id: Types.ObjectId): Promise<HotelRoomDocument> {
-    return this.hotelRoomService.findById(id);
-  }
-
-  @Post()
-  create(@Body() body: any): Promise<HotelRoomDocument> {
-    return this.hotelRoomService.create(body);
-  }
-
-  @Get()
+  @Get('common/hotel-rooms')
   search(@Query() params: SearchRoomsParams): Promise<HotelRoomDocument[]> {
     return this.hotelRoomService.search(params);
   }
 
-  @Put()
+  @Get('common/hotel-rooms:id')
+  findById(@Param('id') id: Types.ObjectId): Promise<HotelRoomDocument> {
+    return this.hotelRoomService.findById(id);
+  }
+
+  @Roles('admin')
+  @Post('admin/hotel-rooms')
+  create(@Body() body: HotelRoomDocument): Promise<HotelRoomDocument> {
+    return this.hotelRoomService.create(body);
+  }
+
+  @Roles('admin')
+  @Put('admin/hotel-rooms/:id')
   update(
-    id: Types.ObjectId,
-    data: HotelRoomDocument,
+    @Param('id') id: string | Types.ObjectId,
+    @Body() data: HotelRoomDocument,
   ): Promise<HotelRoomDocument> {
     return this.hotelRoomService.update(id, data);
   }
 }
 
-@Controller('admin')
+@Controller('admin/hotels')
 @UseGuards(RolesGuard)
 export class HotelsController implements IHotelService {
   constructor(private readonly hotelsService: HotelsService) {}
 
   @Get(':id')
-  // @Roles('admin')
-  findById(@Param() id: Types.ObjectId): Promise<HotelDocument> {
+  @Roles('admin')
+  findById(@Param('id') id: Types.ObjectId): Promise<HotelDocument> {
     return this.hotelsService.findById(id);
   }
 
@@ -67,7 +70,7 @@ export class HotelsController implements IHotelService {
   }
 
   @Roles('admin')
-  @Post('hotels')
+  @Post()
   async create(@Body() data: CreateHotelDto) {
     const hotel = await this.hotelsService.create(data);
     return {
@@ -77,8 +80,12 @@ export class HotelsController implements IHotelService {
     };
   }
 
-  @Put()
-  update(id: Types.ObjectId, data: UpdateHotelParams): Promise<HotelDocument> {
+  @Roles('admin')
+  @Put(':id')
+  update(
+    @Param('id') id: string | Types.ObjectId,
+    @Body() data: UpdateHotelParams,
+  ): Promise<HotelDocument> {
     return this.hotelsService.update(id, data);
   }
 }
