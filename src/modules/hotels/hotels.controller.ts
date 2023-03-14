@@ -27,7 +27,6 @@ import { HotelRoomDocument } from './schemas/hotel-room.schema';
 import { HotelDocument } from './schemas/hotel.schema';
 
 @Controller()
-// @UseGuards(RolesGuard)
 export class HotelRoomController {
   constructor(private readonly hotelRoomService: HotelRoomService) {}
 
@@ -49,6 +48,7 @@ export class HotelRoomController {
     return this.hotelRoomService.findById(id);
   }
 
+  @UseGuards(RolesGuard)
   @Roles('admin')
   @UseInterceptors(FilesInterceptor('files', 5, multerOptions))
   @Post('admin/hotel-rooms')
@@ -60,12 +60,18 @@ export class HotelRoomController {
     return await this.hotelRoomService.create(data);
   }
 
+  @UseGuards(RolesGuard)
   @Roles('admin')
+  @UseInterceptors(FilesInterceptor('files', 5, multerOptions))
   @Put('admin/hotel-rooms/:id')
-  update(
+  async update(
     @Param('id') id: string | Types.ObjectId,
     @Body() data: HotelRoomDocument,
+    @UploadedFiles() files: Array<Express.Multer.File>,
   ): Promise<HotelRoomDocument> {
+    const room = await this.hotelRoomService.findById(id);
+    const newImages = files.map((file) => file.originalname);
+    data.images = room['images'].concat(newImages);
     return this.hotelRoomService.update(id, data);
   }
 }

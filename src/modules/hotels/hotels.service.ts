@@ -86,7 +86,9 @@ export class HotelRoomService implements IHotelRoomService {
     id: string | Types.ObjectId,
     data: HotelRoomDocument,
   ): Promise<HotelRoomDocument> {
-    return await this.HotelRoomModel.findByIdAndUpdate(id, data)
+    return await this.HotelRoomModel.findByIdAndUpdate(id, data, {
+      new: true,
+    })
       .populate({ path: 'hotel' })
       .exec();
   }
