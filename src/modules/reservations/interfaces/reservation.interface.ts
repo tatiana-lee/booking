@@ -1,9 +1,9 @@
 import { Date, Types } from 'mongoose';
 
 export interface IReservation {
-  userId: Types.ObjectId;
-  hotelId: Types.ObjectId;
-  roomId: Types.ObjectId;
+  user: string | Types.ObjectId;
+  hotel: string | Types.ObjectId;
+  room: string | Types.ObjectId;
   dateStart: Date;
   dateEnd: Date;
 }

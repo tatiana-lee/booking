@@ -9,18 +9,18 @@ export type ReservationDocument = Reservation & Document;
 @Schema()
 export class Reservation {
   @Prop({ required: true, type: Types.ObjectId, ref: 'User' })
-  userId: User;
+  user: User;
 
   @Prop({ required: true, type: Types.ObjectId, ref: 'Hotel' })
-  hotelId: Hotel;
+  hotel: Hotel;
 
   @Prop({ required: true, type: Types.ObjectId, ref: 'HotelRoom' })
-  roomId: HotelRoom;
+  room: HotelRoom;
 
-  @Prop({ required: true })
+  @Prop({ required: true, type: Date })
   dateStart: Date;
 
-  @Prop({ required: true })
+  @Prop({ required: true, type: Date })
   dateEnd: Date;
 }
 

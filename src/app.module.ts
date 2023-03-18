@@ -23,7 +23,7 @@ import { UsersModule } from './modules/users/users.module';
     UsersModule,
     HotelsModule,
     AuthModule,
-    // ReservationsModule,
+    ReservationsModule,
     // SupportModule,
   ],
   controllers: [AppController],

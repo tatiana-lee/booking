@@ -5,7 +5,7 @@ import { IReservation } from './reservation.interface';
 
 export interface IReservationService {
   addReservation(data: IReservation): Promise<Reservation>;
-  removeReservation(id: Types.ObjectId): Promise<void>;
+  removeReservation(id: string | Types.ObjectId): Promise<void>;
   getReservations(
     filter: ReservationSearchOptions,
   ): Promise<Array<Reservation>>;
