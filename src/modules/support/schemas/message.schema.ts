@@ -9,14 +9,14 @@ export class Message {
   @Prop({ required: true, type: Types.ObjectId, ref: 'User' })
   author: User;
 
-  @Prop({ required: true, default: Date.now })
-  sendAt: Date;
+  @Prop({ required: true, type: Date, default: Date.now })
+  sentAt: string;
 
   @Prop({ required: true })
   text: string;
 
-  @Prop()
-  readAt: Date;
+  @Prop({ type: Date })
+  readAt: string;
 }
 
 export const MessageSchema = SchemaFactory.createForClass(Message);

@@ -10,10 +10,10 @@ export class SupportRequest {
   @Prop({ required: true, type: Types.ObjectId, ref: 'User' })
   user: User;
 
-  @Prop({ type: Types.ObjectId, ref: 'Message' })
+  @Prop({ type: Types.ObjectId, ref: 'Message', default: [] })
   messages: Message[];
 
-  @Prop()
+  @Prop({ default: true })
   isActive: boolean;
 }
 

@@ -24,7 +24,7 @@ import { UsersModule } from './modules/users/users.module';
     HotelsModule,
     AuthModule,
     ReservationsModule,
-    // SupportModule,
+    SupportModule,
   ],
   controllers: [AppController],
   providers: [AppService],
