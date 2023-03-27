@@ -1,11 +1,12 @@
-import { NestFactory, Reflector } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as session from 'express-session';
 import * as passport from 'passport';
-import { RolesGuard } from './common/guards/roles.guard';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  const PORT = process.env.PORT || 3000;
 
   app.setGlobalPrefix('api');
   app.use(
@@ -16,13 +17,11 @@ async function bootstrap() {
     }),
   );
 
-  // const reflector = app.get(Reflector);
-  // app.useGlobalGuards(new AuthenticatedGuard(reflector));
-  // app.useGlobalGuards(new RolesGuard(reflector));
-
   app.use(passport.initialize());
   app.use(passport.session());
 
-  await app.listen(3000);
+  await app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
 }
 bootstrap();

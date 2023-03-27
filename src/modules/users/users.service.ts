@@ -5,7 +5,7 @@ import { IUserService } from './interfaces/userService.interface';
 import { SearchUserParams } from './interfaces/dto/search-user.dto';
 import { User, UserDocument } from './schemas/user.schema';
 import { CreateUserParams } from './interfaces/dto/create-user.dto';
-import * as bcrypt from 'bcrypt';
+import * as bcryptjs from 'bcryptjs';
 
 @Injectable()
 export class UsersService implements IUserService {
@@ -23,7 +23,7 @@ export class UsersService implements IUserService {
       });
     }
 
-    data.password = await bcrypt.hash(data.password, 8);
+    data.password = await bcryptjs.hash(data.password, 8);
     const user = new this.UserModel(data);
     return await user.save();
   }

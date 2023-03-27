@@ -21,7 +21,6 @@ import { CreateHotelDto } from './interfaces/dto/create-hotel.dto';
 import { SearchHotelParams } from './interfaces/dto/search-hotel.dto';
 import { SearchRoomsParams } from './interfaces/dto/search-room.dto';
 import { UpdateHotelParams } from './interfaces/dto/update-hotel.dto';
-// import { IHotelRoomService } from './interfaces/hotelRoomService.interface';
 import { IHotelService } from './interfaces/hotelService.interface';
 import { HotelRoomDocument } from './schemas/hotel-room.schema';
 import { HotelDocument } from './schemas/hotel.schema';

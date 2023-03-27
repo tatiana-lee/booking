@@ -16,6 +16,7 @@ import { MarkMessagesAsReadDto } from './interfaces/dto/markMessageAsRead.dto';
 import { SendMessageDto } from './interfaces/dto/sendMessage.dto';
 import { GetChatListParams } from './interfaces/getChatListParams';
 import { SupportRequestDocument } from './schemas/support.request.schema';
+import { SupportGateway } from './support.gateway';
 import { SupportRequestClientService, SupportService } from './support.service';
 
 @UseGuards(RolesGuard)
@@ -32,21 +33,20 @@ export class SupportClientController {
     @Body() body: CreateSupportRequestDto,
     @Request() req,
   ) {
-    const userId = req.user._id;
+    const user = req.user;
     const newSupportRequest =
       await this.supportRequestClientService.createSupportRequest({
-        // ...body,
-        user: userId,
+        user: user._id,
         text: body.text,
       });
 
     await this.supportRequestService.sendMessage(
       {
-        author: userId,
+        author: user._id,
         supportRequest: newSupportRequest['_id'],
         text: body.text,
       },
-      userId,
+      user,
     );
 
     return [
@@ -91,6 +91,7 @@ export class SupportController {
   constructor(
     private readonly supportRequestService: SupportService,
     private readonly supportRequestClientService: SupportRequestClientService,
+    private readonly supportGateway: SupportGateway,
   ) {}
 
   @Roles('manager', 'client')
@@ -114,7 +115,7 @@ export class SupportController {
     @Body() body: SendMessageDto,
   ) {
     const user = req.user;
-    return await this.supportRequestService.sendMessage(
+    const message = await this.supportRequestService.sendMessage(
       {
         author: user._id,
         supportRequest: supportId,
@@ -122,6 +123,10 @@ export class SupportController {
       },
       user.role === 'client' ? user : false,
     );
+
+    this.supportGateway.ws
+      .to(supportId.toString())
+      .emit('new-message', message);
   }
 
   @Roles('manager', 'client')

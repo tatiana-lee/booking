@@ -20,16 +20,17 @@ import { joiUserSchema } from './validation/joi.user.schema';
 import { JoiValidationPipe } from './validation/joi.validation.pipe';
 
 @Controller()
-@UseGuards(RolesGuard)
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
+  @UseGuards(RolesGuard)
   @Roles('admin')
   @Get('admin/users')
   async findAllUsersByAdmin(@Query() params: SearchUserParams) {
     return await this.userService.findAll(params);
   }
 
+  @UseGuards(RolesGuard)
   @Roles('manager')
   @Get('manager/users')
   async findAllUsersByManager(@Query() params: SearchUserParams) {
@@ -54,6 +55,7 @@ export class UsersController {
     }
   }
 
+  @UseGuards(RolesGuard)
   @Roles('admin')
   @UsePipes(new JoiValidationPipe(joiUserSchema))
   @Post('admin/users')

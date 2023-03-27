@@ -1,0 +1,27 @@
+services:
+  mongo:
+    image: mongo
+    restart: always
+    volumes:
+      - ./database:/data/db
+    ports:
+      - 27017:27017
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    depends_on:
+      - mongo
+
+  booking:
+    build: .
+    volumes:
+      - ./:/app
+    ports:
+      - 8080:3000
+    environment:
+      - PORT=3000
+    depends_on:
+      - mongo

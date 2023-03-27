@@ -6,7 +6,6 @@ import { CreateSupportRequestDto } from './interfaces/dto/createSupportRequest.d
 import { MarkMessagesAsReadDto } from './interfaces/dto/markMessageAsRead.dto';
 import { SendMessageDto } from './interfaces/dto/sendMessage.dto';
 import { GetChatListParams } from './interfaces/getChatListParams';
-// import { ISupportRequestClientService } from './interfaces/supportRequestClientService.interface';
 import { ISupportRequestService } from './interfaces/supportRequestService.interface';
 import { Message, MessageDocument } from './schemas/message.schema';
 import {
@@ -83,8 +82,6 @@ export class SupportService implements ISupportRequestService {
 
 @Injectable()
 export class SupportRequestClientService {
-  // implements ISupportRequestClientService
-  // {
   constructor(
     @InjectModel(SupportRequest.name)
     private SupportRequestModel: Model<SupportRequestDocument>,
@@ -132,8 +129,4 @@ export class SupportRequestClientService {
     );
     return request;
   }
-
-  // getUnreadCount(supportRequest: string | Types.ObjectId): Promise<MessageDocument[]> {
-
-  // }
 }

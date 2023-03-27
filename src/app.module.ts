@@ -14,7 +14,13 @@ import { UsersModule } from './modules/users/users.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    MongooseModule.forRoot(process.env.MONGO_CONNECTION),
+    MongooseModule.forRoot(process.env.MONGO_URL, {
+      user: process.env.USERNAME,
+      pass: process.env.PASSWORD,
+      dbName: process.env.DB_NAME,
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }),
     MulterModule.register({
       storage: diskStorage({
         destination: './images/rooms',
