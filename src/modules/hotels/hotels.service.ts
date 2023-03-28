@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { IHotelService } from './interfaces/hotelService.interface';
-import { InjectModel, InjectConnection } from '@nestjs/mongoose';
-import { Connection, Model, Types } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model, Types } from 'mongoose';
 import { Hotel, HotelDocument } from './schemas/hotel.schema';
 import { CreateHotelDto } from './interfaces/dto/create-hotel.dto';
 import { SearchHotelParams } from './interfaces/dto/search-hotel.dto';
@@ -14,12 +14,11 @@ import { HotelRoom, HotelRoomDocument } from './schemas/hotel-room.schema';
 export class HotelsService implements IHotelService {
   constructor(
     @InjectModel(Hotel.name) private HotelModel: Model<HotelDocument>,
-    @InjectConnection() private connection: Connection,
   ) {}
 
   async create(data: CreateHotelDto): Promise<HotelDocument> {
-    const hotel = await new this.HotelModel(data);
-    return hotel.save();
+    const hotel = new this.HotelModel(data);
+    return await hotel.save();
   }
 
   async findById(id: Types.ObjectId | string): Promise<HotelDocument> {
@@ -45,7 +44,7 @@ export class HotelsService implements IHotelService {
     data: UpdateHotelParams,
   ): Promise<HotelDocument> {
     if (Types.ObjectId.isValid(id)) {
-      return await this.HotelModel.findOneAndUpdate({ _id: id }, data, {
+      return this.HotelModel.findOneAndUpdate({ _id: id }, data, {
         new: true,
       });
     }
@@ -57,7 +56,6 @@ export class HotelRoomService implements IHotelRoomService {
   constructor(
     @InjectModel(HotelRoom.name)
     private HotelRoomModel: Model<HotelRoomDocument>,
-    @InjectConnection() private connection: Connection,
   ) {}
 
   async create(data: Partial<HotelRoomDocument>): Promise<HotelRoomDocument> {

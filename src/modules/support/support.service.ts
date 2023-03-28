@@ -1,6 +1,6 @@
 import { Injectable, ForbiddenException } from '@nestjs/common';
-import { InjectConnection, InjectModel } from '@nestjs/mongoose';
-import { Connection, Model, Types } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model, Types } from 'mongoose';
 import { UserDocument } from '../users/schemas/user.schema';
 import { CreateSupportRequestDto } from './interfaces/dto/createSupportRequest.dto';
 import { MarkMessagesAsReadDto } from './interfaces/dto/markMessageAsRead.dto';
@@ -19,7 +19,6 @@ export class SupportService implements ISupportRequestService {
     @InjectModel(Message.name) private MessageModel: Model<MessageDocument>,
     @InjectModel(SupportRequest.name)
     private SupportRequestModel: Model<SupportRequestDocument>,
-    @InjectConnection() private connection: Connection,
   ) {}
 
   async sendMessage(

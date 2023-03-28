@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { InjectModel, InjectConnection } from '@nestjs/mongoose';
-import { Model, Connection, Types } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model, Types } from 'mongoose';
 import { IUserService } from './interfaces/userService.interface';
 import { SearchUserParams } from './interfaces/dto/search-user.dto';
 import { User, UserDocument } from './schemas/user.schema';
@@ -9,10 +9,7 @@ import * as bcryptjs from 'bcryptjs';
 
 @Injectable()
 export class UsersService implements IUserService {
-  constructor(
-    @InjectModel(User.name) private UserModel: Model<UserDocument>,
-    @InjectConnection() private connection: Connection,
-  ) {}
+  constructor(@InjectModel(User.name) private UserModel: Model<UserDocument>) {}
 
   async create(data: CreateUserParams): Promise<UserDocument> {
     const { email } = data;

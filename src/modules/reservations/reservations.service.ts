@@ -3,8 +3,8 @@ import {
   BadRequestException,
   ForbiddenException,
 } from '@nestjs/common';
-import { InjectConnection, InjectModel } from '@nestjs/mongoose';
-import { Connection, Model, Types } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model, Types } from 'mongoose';
 import { UserDocument } from '../users/schemas/user.schema';
 import { ReservationSearchOptions } from './interfaces/dto/reservationSearch.dto';
 import { IReservation } from './interfaces/reservation.interface';
@@ -16,7 +16,6 @@ export class ReservationsService implements IReservationService {
   constructor(
     @InjectModel(Reservation.name)
     private ReservationModel: Model<ReservationDocument>,
-    @InjectConnection() private connection: Connection,
   ) {}
 
   async addReservation(data: IReservation): Promise<ReservationDocument> {
